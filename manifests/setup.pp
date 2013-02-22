@@ -22,7 +22,7 @@ define tomcat::setup (
     path => ['/sbin', '/bin', '/usr/sbin', '/usr/bin'], }
 
   file { "${cachedir}/${source}":
-    source  => "puppet:///modules/${module_name}/${source}",
+    source  => "puppet:///modules/${caller_module_name}/${source}",
     require => File[$cachedir],
   }
 
