@@ -1,14 +1,15 @@
 
 define tomcat::setup (
-  $source        = undef,
-  $deploymentdir = undef,
-  $user          = undef,
-  $serverxml     = undef,
-  $webxml        = undef,
-  $init_script   = undef,
-  $ensure        = 'running',
-  $enable        = true,
-  $cachedir      = "/var/lib/puppet/working-tomcat-${name}") {
+  $source         = undef,
+  $deploymentdir  = undef,
+  $user           = undef,
+  $serverxml      = undef,
+  $webxml         = undef,
+  $init_script    = undef,
+  $ensure         = 'running',
+  $enable         = true,
+  $defaultwebapps = true,
+  $cachedir       = "/var/lib/puppet/working-tomcat-${name}") {
   # working directory to untar tomcat
   file { $cachedir:
     ensure => 'directory',
@@ -45,5 +46,18 @@ define tomcat::setup (
     command => "cp -r extracted/apache-tomcat*/* ${deploymentdir} && chown -R ${user}:${user} ${deploymentdir}",
     creates => "${deploymentdir}/lib/catalina.jar",
     require => Exec["create_target_tomcat-${name}"],
+  }
+
+  if ($defaultwebapps == false) {
+    file { [
+      "${deploymentdir}/webapps/docs",
+      "${deploymentdir}/webapps/examples",
+      "${deploymentdir}/webapps/host-manager",
+      "${deploymentdir}/webapps/manager",
+      "${deploymentdir}/webapps/ROOT"]:
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+    }
   }
 }
