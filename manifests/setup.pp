@@ -69,7 +69,7 @@ define tomcat::setup (
   }
 
   if ($default_webapp_hostmanager == absent) {
-    file { "${deploymentdir}/webapps/hostmanager":
+    file { "${deploymentdir}/webapps/host-manager":
       ensure  => absent,
       recurse => true,
       force   => true,
@@ -85,7 +85,7 @@ define tomcat::setup (
   }
 
   if ($default_webapp_root == absent) {
-    file { "${deploymentdir}/webapps/root":
+    file { "${deploymentdir}/webapps/ROOT":
       ensure  => absent,
       recurse => true,
       force   => true,
