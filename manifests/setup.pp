@@ -1,15 +1,19 @@
 
 define tomcat::setup (
-  $source         = undef,
-  $deploymentdir  = undef,
-  $user           = undef,
-  $serverxml      = undef,
-  $webxml         = undef,
-  $init_script    = undef,
-  $ensure         = 'running',
-  $enable         = true,
-  $defaultwebapps = true,
-  $cachedir       = "/var/lib/puppet/working-tomcat-${name}") {
+  $source        = undef,
+  $deploymentdir = undef,
+  $user          = undef,
+  $serverxml     = undef,
+  $webxml        = undef,
+  $init_script   = undef,
+  $ensure        = 'running',
+  $enable        = true,
+  $default_webapp_docs        = present,
+  $default_webapp_examples    = present,
+  $default_webapp_hostmanager = present,
+  $default_webapp_manager     = present,
+  $default_webapp_root        = present,
+  $cachedir      = "/var/lib/puppet/working-tomcat-${name}") {
   # working directory to untar tomcat
   file { $cachedir:
     ensure => 'directory',
@@ -48,13 +52,40 @@ define tomcat::setup (
     require => Exec["create_target_tomcat-${name}"],
   }
 
-  if ($defaultwebapps == false) {
-    file { [
-      "${deploymentdir}/webapps/docs",
-      "${deploymentdir}/webapps/examples",
-      "${deploymentdir}/webapps/host-manager",
-      "${deploymentdir}/webapps/manager",
-      "${deploymentdir}/webapps/ROOT"]:
+  if ($default_webapp_docs == absent) {
+    file { "${deploymentdir}/webapps/docs":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+    }
+  }
+
+  if ($default_webapp_examples == absent) {
+    file { "${deploymentdir}/webapps/examples":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+    }
+  }
+
+  if ($default_webapp_hostmanager == absent) {
+    file { "${deploymentdir}/webapps/hostmanager":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+    }
+  }
+
+  if ($default_webapp_manager == absent) {
+    file { "${deploymentdir}/webapps/manager":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+    }
+  }
+
+  if ($default_webapp_root == absent) {
+    file { "${deploymentdir}/webapps/root":
       ensure  => absent,
       recurse => true,
       force   => true,
