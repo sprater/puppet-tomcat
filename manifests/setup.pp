@@ -14,6 +14,8 @@ define tomcat::setup (
   $default_webapp_manager     = present,
   $default_webapp_root        = present,
   $cachedir      = "/var/lib/puppet/working-tomcat-${name}") {
+  # To do:
+  # Validate input for $default_webapp*
   # working directory to untar tomcat
   file { $cachedir:
     ensure => 'directory',
@@ -57,6 +59,7 @@ define tomcat::setup (
       ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
   }
 
@@ -65,6 +68,7 @@ define tomcat::setup (
       ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
   }
 
@@ -73,6 +77,7 @@ define tomcat::setup (
       ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
   }
 
@@ -81,6 +86,7 @@ define tomcat::setup (
       ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
   }
 
@@ -89,6 +95,7 @@ define tomcat::setup (
       ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
   }
 }
