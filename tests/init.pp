@@ -1,7 +1,7 @@
 tomcat::setup { 'tomcat7':
-  source        => "apache-ant-1.9.0-bin.tar.gz",
-  deploymentdir => "/home/jude/tomcat7",
-  user          => "jude",
+  source        => "apache-tomcat-7.0.39.tar.gz",
+  deploymentdir => "/root/tomcat7",
+  user          => "root",
   serverxml     => "test",
   webxml        => "test",
   init_script   => "test",

@@ -6,15 +6,7 @@ define tomcat::setup (
   $serverxml     = undef,
   $webxml        = undef,
   $init_script   = undef,
-  $ensure        = [
-    {
-      "module" => "present"
-    }
-    ,
-    {
-      "service" => "running"
-    }
-    ],
+  $ensure        = 'running',
   $enable        = true,
   $default_webapp_docs        = "present",
   $default_webapp_examples    = "present",
@@ -74,142 +66,98 @@ define tomcat::setup (
     fail('default_webapp_root parameter must be either present or absent')
   }
 
-  # for legacy purposes - older clients have just running or stopped
-  if ($ensure in ['running', 'stopped']) {
-    if ($ensure == 'running') {
-      $ensure__ = [
-        {
-          "module" => "present"
-        }
-        ,
-        {
-          "service" => "running"
-        }
-        ]
-    } else {
-      $ensure__ = [
-        {
-          "module" => "present"
-        }
-        ,
-        {
-          "service" => "stopped"
-        }
-        ]
-    }
+  if !($ensure in ['running', 'stopped']) {
+    fail('ensure parameter must be running or stopped')
   }
 
-  if ($ensure__ == undef) {
-    $ensure__ = $ensure
-  }
-
-  if !($ensure__["module"] in ['present', 'absent']) {
-    fail('ensure[module] parameter must be present or absent')
-  }
-
-  if !($ensure__["service"] in ['running', 'stopped']) {
-    fail('ensure[service] parameter must be running or stopped')
-  }
 
   if ($caller_module_name == undef) {
-    $caller_module_name = $module_name
+    $mod_name = $module_name
+  } else {
+    $mod_name = $caller_module_name
   }
 
-  if ($ensure__["module"] == "present") {
-    # working directory to untar tomcat
-    file { $cachedir:
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '644',
-    }
+  # working directory to untar tomcat
+  file { $cachedir:
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '644',
+  }
 
-    # resource defaults for Exec
-    Exec {
-      path => ['/sbin', '/bin', '/usr/sbin', '/usr/bin'],
-    }
+  # resource defaults for Exec
+  Exec {
+    path => ['/sbin', '/bin', '/usr/sbin', '/usr/bin'],
+  }
 
-    file { "${cachedir}/${source}":
-      source  => "puppet:///modules/${caller_module_name}/${source}",
-      require => File[$cachedir],
-    }
+  file { "${cachedir}/${source}":
+    source  => "puppet:///modules/${mod_name}/${source}",
+    require => File[$cachedir],
+  }
 
-    exec { "extract_tomcat-${name}":
-      cwd     => $cachedir,
-      command => "mkdir extracted; tar -C extracted -xzf ${source} && touch .tomcat_extracted",
-      creates => "${cachedir}/.tomcat_extracted",
-      require => File["${cachedir}/${source}"],
-    }
+  exec { "extract_tomcat-${name}":
+    cwd     => $cachedir,
+    command => "mkdir extracted; tar -C extracted -xzf ${source} && touch .tomcat_extracted",
+    creates => "${cachedir}/.tomcat_extracted",
+    require => File["${cachedir}/${source}"],
+  }
 
-    exec { "create_target_tomcat-${name}":
-      cwd     => '/',
-      command => "mkdir -p ${deploymentdir}",
-      creates => $deploymentdir,
-      require => Exec["extract_tomcat-${name}"],
-    }
+  exec { "create_target_tomcat-${name}":
+    cwd     => '/',
+    command => "mkdir -p ${deploymentdir}",
+    creates => $deploymentdir,
+    require => Exec["extract_tomcat-${name}"],
+  }
 
-    exec { "move_tomcat-${name}":
-      cwd     => $cachedir,
-      command => "cp -r extracted/apache-tomcat*/* ${deploymentdir} && chown -R ${user}:${user} ${deploymentdir}",
-      creates => "${deploymentdir}/lib/catalina.jar",
-      require => Exec["create_target_tomcat-${name}"],
-    }
+  exec { "move_tomcat-${name}":
+    cwd     => $cachedir,
+    command => "cp -r extracted/apache-tomcat*/* ${deploymentdir} && chown -R ${user}:${user} ${deploymentdir}",
+    creates => "${deploymentdir}/lib/catalina.jar",
+    require => Exec["create_target_tomcat-${name}"],
+  }
 
-    if ($default_webapp_docs == "absent") {
-      file { "${deploymentdir}/webapps/docs":
-        ensure  => absent,
-        recurse => true,
-        force   => true,
-        require => Exec["move_tomcat-${name}"],
-      }
-    }
-
-    if ($default_webapp_examples == "absent") {
-      file { "${deploymentdir}/webapps/examples":
-        ensure  => absent,
-        recurse => true,
-        force   => true,
-        require => Exec["move_tomcat-${name}"],
-      }
-    }
-
-    if ($default_webapp_hostmanager == "absent") {
-      file { "${deploymentdir}/webapps/host-manager":
-        ensure  => absent,
-        recurse => true,
-        force   => true,
-        require => Exec["move_tomcat-${name}"],
-      }
-    }
-
-    if ($default_webapp_manager == "absent") {
-      file { "${deploymentdir}/webapps/manager":
-        ensure  => absent,
-        recurse => true,
-        force   => true,
-        require => Exec["move_tomcat-${name}"],
-      }
-    }
-
-    if ($default_webapp_root == "absent") {
-      file { "${deploymentdir}/webapps/ROOT":
-        ensure  => absent,
-        recurse => true,
-        force   => true,
-        require => Exec["move_tomcat-${name}"],
-      }
-    }
-  } else {
-    file { $cachedir:
-      ensure  => 'absent',
+  if ($default_webapp_docs == "absent") {
+    file { "${deploymentdir}/webapps/docs":
+      ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
+  }
 
-    file { $deploymentdir:
-      ensure  => 'absent',
+  if ($default_webapp_examples == "absent") {
+    file { "${deploymentdir}/webapps/examples":
+      ensure  => absent,
       recurse => true,
       force   => true,
+      require => Exec["move_tomcat-${name}"],
+    }
+  }
+
+  if ($default_webapp_hostmanager == "absent") {
+    file { "${deploymentdir}/webapps/host-manager":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+      require => Exec["move_tomcat-${name}"],
+    }
+  }
+
+  if ($default_webapp_manager == "absent") {
+    file { "${deploymentdir}/webapps/manager":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+      require => Exec["move_tomcat-${name}"],
+    }
+  }
+
+  if ($default_webapp_root == "absent") {
+    file { "${deploymentdir}/webapps/ROOT":
+      ensure  => absent,
+      recurse => true,
+      force   => true,
+      require => Exec["move_tomcat-${name}"],
     }
   }
 }
