@@ -68,6 +68,8 @@ This file must be in the files directory in the caller module.
 
 This parameter specifies the directory where tomcat will be installed.
 
+Note: If deploymentdir is set to /usr/local/, and you want to remove this installation in the future, setting ensure => 'absent' will cause the entire directory, i. e. /usr/local/ to be deleted permanently.
+
 ####`user`
 
 This parameter is used to set the permissions for the installation directory of tomcat.
