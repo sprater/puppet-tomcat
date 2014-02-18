@@ -1,133 +1,181 @@
-tomcat
-====
+####Table of Contents
 
+1. [Overview](#overview)
+2. [Module Description - What the module does and why it is useful](#module-description)
+3. [Prerequisites](#prerequisites)
+3. [Setup - The basics of getting started with tomcat](#setup)
+    * [What tomcat affects](#what-tomcat-affects)
+    * [Setup requirements](#setup-requirements)
+    * [Beginning with tomcat](#beginning-with-tomcat)
+4. [Usage - Configuration options and additional functionality](#usage)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
 
-Overview
---------
+##Overview
 
-The Apache Tomcat module installs and maintains the configuration of the Tomcat Jave EE server.
+The tomcat module installs the Apache Tomcat binary distribution.
 
+##Module Description
 
-Module Description
--------------------
+The Tomcat module installs the Apache Tomcat binary distribution onto your nodes.
+You may set the Tomcat binary distribution package, the directory into which
+it will install, the user that will own the package, and whether or not a number
+of default Tomcat resources will be installed as well.
 
-The Apache Tomcat module allows Puppet to install, configure and maintain the Tomcat Java EE server.
+##Prerequisites
 
-Setup
------
+You'll also need to download the Apache Tomcat binary distribution package:
 
-**What tomcat affects:**
+ * Tomcat 7:  <http://tomcat.apache.org/download-70.cgi>
 
-* installation directory for Tomcat
-* init script located in /etc/init.d/
-	
-### Beginning with Apache Tomcat
+Choose the correct tar-gzipped package for your platform.  Only `*.tar.gz`
+packages are supported at this time.
+   
+##Setup
 
-To setup Apache Tomcat on a server
+###What tomcat affects
 
-    tomcat::setup { 'example.com-tomcat':
-      ensure        => 'running',
-      enable        => true,
-      source        => 'apache-tomcat-7.0.39.tar.gz',
-      deploymentdir => '/home/example.com/apps/apache-tomcat',
-      user          => 'example.com',
-      serverxml     => 'example.com-server.xml',
-      webxml        => 'example.com-web.xml',
-      init_script   => 'example.com-init_script',
-      default_webapp_docs        => 'present',
-      default_webapp_examples    => 'present',
-      default_webapp_hostmanager => 'present',
-      default_webapp_manager     => 'present',
-      default_webapp_root        => 'present'
-    }
+* Tomcat base directory
 
-Usage
-------
+This module installs a standalone version of Apache Tomcat, separate
+from any OS-supplied Tomcat package.
 
-The `tomcat::setup` resource definition has several parameters to assist installation of tomcat.
+It should work on any Unix environment.
 
-**Parameters within `tomcat`**
+###Beginning with tomcat
 
-####`ensure`
+`include 'tomcat'` in the puppet master's `site.pp` file is enough to get 
+you up and running.  It can also be included in any other caller module.
 
-This parameter specifies whether the tomcat service should be running or not.
-Valid arguments are "running" or "stopped". Default "running"
+Set this in `site.pp` or in your caller module:
+```puppet
+include tomcat
+```
+or, alternatively (to override the default parameters):
+```puppet
+class { '::tomcat'
+  source        => 'apache-tomcat-7.0.39.tar.gz',
+  deploymentdir => '/home/example.com/apps/apache-tomcat',
+  user          => 'example.com',
+  group         => 'mygroup',
+  default_webapp_docs        => 'present',
+  default_webapp_examples    => 'present',
+  default_webapp_hostmanager => 'present',
+  default_webapp_manager     => 'present',
+  default_webapp_root        => 'present'
+}
+```
+Then you can use the type `tomcat::install`:
 
-####`enable`
+```puppet
+tomcat::install { 'example.com-tomcat':
+  source        => 'apache-tomcat-7.0.39.tar.gz',
+  deploymentdir => '/home/example.com/apps/apache-tomcat',
+  user          => 'example.com',
+  group         => 'mygroup',
+  default_webapp_docs        => 'present',
+  default_webapp_examples    => 'present',
+  default_webapp_hostmanager => 'present',
+  default_webapp_manager     => 'present',
+  default_webapp_root        => 'present'
+}
+```
 
-This parameter specifies whether tomcat should be enabled to start automatically on system boot.
-Valid arguments are true or false. Default true
+##Usage
 
-####`source`
+##Reference
 
-This parameter specifies the source for the tomcat archive. 
-This file must be in the files directory in the caller module. 
-**Only .tar.gz source archives are supported.**
+###Classes
 
-####`deploymentdir`
+####Public Classes
 
-This parameter specifies the directory where tomcat will be installed.
+* tomcat:  Main class
+* tomcat::install: Puppet resource that  installs the Tomcat
+  binary package.
 
-Note: If deploymentdir is set to /usr/local/, and you want to remove this installation in the future, setting ensure => 'absent' will cause the entire directory, i. e. /usr/local/ to be deleted permanently.
+####Private Classes
 
-####`user`
+* tomcat::params:  The default configuration parameters.
 
-This parameter is used to set the permissions for the installation directory of tomcat.
+###Parameters
 
-####`serverxml`
+The following parameters are available in the tomcat module.
 
-This parameter specifies the server.xml file to be placed in the deployed tomcat installation.
-This file must be in the files directory in the caller module.
+The defaults are defined in `tomcat::params`, and may be changed there, or
+overridden in the Puppet files that include the `tomcat` class.
 
-####`webxml`
+#####`source`
 
-This parameter specifies the web.xml file to be placed in the deployed tomcat installation.
-This file must be in the files directory in the caller module.
+The file that contains the Tomcat binary distribution.
+This file must be in the files directory in the caller module.  
+Only `.tar.gz` source archives are supported.
 
-####`default_webapp_docs`
-This parameter specifies whether tomcat's default web app documentation should be present or not.
-Valid arguments are "present" or "absent". Default "present"
+Default: **apache-tomcat-7.0.50.tar.gz**
 
-####`default_webapp_examples`
-This parameter specifies whether tomcat's default example web apps should be present or not.
-Valid arguments are "present" or "absent". Default "present"
+#####`deploymentdir`
 
-####`default_webapp_hostmanager`
-This parameter specifies whether tomcat's default web app for host management should be present or not.
-Valid arguments are "present" or "absent". Default "present"
+The absolute path to the directory where Tomcat will be installed.
 
-####`default_webapp_manager`
-This parameter specifies whether tomcat's default web app for server configuration should be present or not.
-Valid arguments are "present" or "absent". Default "present"
+Default: **/opt/tomcat7**
 
-####`default_webapp_root`
-This parameter specifies whether tomcat's default web app root directory should be present or not.
-Valid arguments are "present" or "absent". Default "present"
+#####`user`
 
+The Unix user that will own the Tomcat installation.
 
-Limitations
-------------
+Default: **tomcat**
 
-This module has been built and tested using Puppet 2.6.x, 2.7, and 3.x.
+#####`group`
 
-The module has been tested on:
+The Unix group that will own the Tomcat installation.
 
-* CentOS 5.9
-* CentOS 6.4
-* Debian 6.0 
-* Ubuntu 12.04
+Default: **tomcat**
 
-Testing on other platforms has been light and cannot be guaranteed. 
+#####`default_webapp_docs`
 
-Development
-------------
+Whether Tomcat's default webapp documentation should
+be present or not. Valid arguments are "present" or "absent".
 
-Bug Reports
------------
+Default: **present**
 
-Release Notes
---------------
+#####`default_webapp_examples`
 
-**0.1.0**
+Whether Tomcat's default example webapps should
+be present or not. Valid arguments are "present" or "absent".
 
-First initial release.
+Default: **present**
+
+#####`default_webapp_hostmanager`
+
+Whether Tomcat's default webapp for host management should be present or not.
+Valid arguments are "present" or "absent".
+
+Default: **present**
+
+#####`default_webapp_manager`
+
+Whether Tomcat's default webapp for server configuration should be present or not.
+Valid arguments are "present" or "absent".
+
+Default: **present**
+
+#####`default_webapp_root`
+
+Whether Tomcat's default webapp root directory should be present or not. 
+Valid arguments are "present" or "absent".
+
+Default: **present**
+
+##Limitations
+
+This module does not define the raw filesystem devices, nor mount
+any filesystems.  Nor dies it create nor ensure the Unix user.
+Make sure the filesystem in which the Tomcat install will reside
+is created and mounted, and that the Unix user exists.
+
+This module has been built and tested using Puppet 3.4.x. on RHEL6.  It should
+work on all Unices, but your mileage may vary.
+
+##Development
+
+See https://github.com/7terminals/puppet-tomcat

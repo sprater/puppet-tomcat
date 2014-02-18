@@ -1,5 +1,5 @@
 name '7terminals-tomcat'
-version '0.0.2'
+version '0.0.3'
 
 author 'Francis Pereira'
 license ''
