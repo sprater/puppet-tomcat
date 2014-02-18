@@ -29,7 +29,7 @@ You'll also need to download the Apache Tomcat binary distribution package:
 
  * Tomcat 7:  <http://tomcat.apache.org/download-70.cgi>
 
-Choose the correct *.tar.gz package for your platform.  Only `*.tar.gz`
+Choose the correct tar-gzipped package for your platform.  Only `*.tar.gz`
 packages are supported at this time.
    
 ##Setup
@@ -45,36 +45,21 @@ It should work on any Unix environment.
 
 ###Beginning with tomcat
 
-####Build and install the module
-
-1. Clone this project, change to the `puppet-tomcat` directory. 
-
-2. Copy the binary distribution file you downloaded (see 
-[Prerequisites](#prerequisites), above) into the caller module's `files/` 
-directory:
-
-```
-    cp /path/to/source/packages/*.tar.gz files/
-```
-
-3. Build the module: 
-
-```
-    puppet module build .
-```
-
-4. Install the module:
-
-```
-    sudo puppet module install pkg/7terminals-tomcat-<version>.tar.gz --ignore-dependencies
-```
-
-   where `<version>` is the current version of the module.
-
-####Enable the module in Puppet
-
 `include 'tomcat'` in the puppet master's `site.pp` file is enough to get 
 you up and running.  It can also be included in any other caller module.
+
+```puppet
+include tomcat
+class { '::tomcat'
+  source        => 'apache-tomcat-7.0.39.tar.gz',
+  deploymentdir => '/home/example.com/apps/apache-tomcat',
+  user          => 'example.com',
+  default_webapp_docs        => 'present',
+  default_webapp_examples    => 'present',
+  default_webapp_hostmanager => 'present',
+  default_webapp_manager     => 'present',
+  default_webapp_root        => 'present'
+}
 
 ##Usage
 
