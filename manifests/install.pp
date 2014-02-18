@@ -26,13 +26,14 @@ class tomcat::install {
 
   include tomcat
 
-  $cachedir = "/var/lib/puppet/working-tomcat-${name}"
 
   if ($caller_module_name == undef) {
     $mod_name = $module_name
   } else {
     $mod_name = $caller_module_name
   }
+
+  $cachedir = "/var/lib/puppet/working-tomcat-${mod_name}"
 
   # working directory to untar tomcat
   file { $cachedir:
