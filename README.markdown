@@ -60,6 +60,7 @@ class { '::tomcat'
   default_webapp_manager     => 'present',
   default_webapp_root        => 'present'
 }
+```
 
 ##Usage
 
