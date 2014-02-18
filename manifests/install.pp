@@ -9,7 +9,8 @@
 #
 # [*cachedir*]
 #  The temporary directory where the Tomcat binary distribution file will be
-#  unpacked.  Default is "
+#  unpacked.
+
 # === Examples
 #
 # === Authors
@@ -33,7 +34,7 @@ class tomcat::install inherits tomcat {
     $mod_name = $caller_module_name
   }
 
-  $cachedir = "/var/lib/puppet/working-tomcat-${mod_name}"
+  $cachedir = "/var/lib/puppet/working-tomcat-${::tomcat::install::mod_name}"
 
   # working directory to untar tomcat
   file { $cachedir:
@@ -48,74 +49,74 @@ class tomcat::install inherits tomcat {
     path => ['/sbin', '/bin', '/usr/sbin', '/usr/bin'],
   }
 
-  file { "${cachedir}/${source}":
-    source  => "puppet:///modules/${mod_name}/${source}",
-    require => File[$cachedir],
+  file { "${::tomcat::install::cachedir}/${::tomcat::source_real}":
+    source  => "puppet:///modules/${::tomcat::install::mod_name}/${::tomcat::source_real}",
+    require => File[$::tomcat::install::cachedir],
   }
 
-  exec { "extract_tomcat-${name}":
-    cwd     => $cachedir,
-    command => "mkdir extracted; tar -C extracted -xzf ${source} && touch .tomcat_extracted",
-    creates => "${cachedir}/.tomcat_extracted",
-    require => File["${cachedir}/${source}"],
+  exec { "extract_tomcat-${::tomcat::install::mod_name}":
+    cwd     => $::tomcat::install::cachedir,
+    command => "mkdir extracted; tar -C extracted -xzf ${::tomcat::source_real} && touch .tomcat_extracted",
+    creates => "${::tomcat::install::cachedir}/.tomcat_extracted",
+    require => File["${::tomcat::install::cachedir}/${::tomcat::source_real}"],
   }
 
-  exec { "create_target_tomcat-${name}":
+  exec { "create_target_tomcat-${::tomcat::install::mod_name}":
     cwd     => '/',
-    command => "mkdir -p ${deploymentdir}",
-    creates => $deploymentdir,
-    require => Exec["extract_tomcat-${name}"],
+    command => "mkdir -p ${::tomcat::deploymentdir_real}",
+    creates => $::tomcat::deploymentdir_real,
+    require => Exec["extract_tomcat-${::tomcat::install::mod_name}"],
   }
 
-  exec { "move_tomcat-${name}":
-    cwd     => $cachedir,
-    command => "cp -r extracted/apache-tomcat*/* ${deploymentdir} && chown -R ${user}:${user} ${deploymentdir}",
-    creates => "${deploymentdir}/lib/catalina.jar",
-    require => Exec["create_target_tomcat-${name}"],
+  exec { "move_tomcat-${::tomcat::install::mod_name}":
+    cwd     => $::tomcat::install::cachedir,
+    command => "cp -r extracted/apache-tomcat*/* ${::tomcat::deploymentdir_real} && chown -R ${::tomcat::user_real}:${::tomcat::user_real} ${::tomcat::deploymentdir_real}",
+    creates => "${::tomcat::deploymentdir_real}/lib/catalina.jar",
+    require => Exec["create_target_tomcat-${::tomcat::install::mod_name}"],
   }
 
-  if ($default_webapp_docs == 'absent') {
-    file { "${deploymentdir}/webapps/docs":
+  if ($::tomcat::default_webapp_docs_real == 'absent') {
+    file { "${::tomcat::deploymentdir_real}/webapps/docs":
       ensure  => absent,
       recurse => true,
       force   => true,
-      require => Exec["move_tomcat-${name}"],
+      require => Exec["move_tomcat-${::tomcat::install::mod_name}"],
     }
   }
 
-  if ($default_webapp_examples == 'absent') {
-    file { "${deploymentdir}/webapps/examples":
+  if ($::tomcat::default_webapp_examples_real == 'absent') {
+    file { "${::tomcat::deploymentdir_real}/webapps/examples":
       ensure  => absent,
       recurse => true,
       force   => true,
-      require => Exec["move_tomcat-${name}"],
+      require => Exec["move_tomcat-${::tomcat::install::mod_name}"],
     }
   }
 
-  if ($default_webapp_hostmanager == 'absent') {
-    file { "${deploymentdir}/webapps/host-manager":
+  if ($::tomcat::default_webapp_hostmanager_real == 'absent') {
+    file { "${::tomcat::deploymentdir_real}/webapps/host-manager":
       ensure  => absent,
       recurse => true,
       force   => true,
-      require => Exec["move_tomcat-${name}"],
+      require => Exec["move_tomcat-${::tomcat::install::mod_name}"],
     }
   }
 
-  if ($default_webapp_manager == 'absent') {
-    file { "${deploymentdir}/webapps/manager":
+  if ($::tomcat::default_webapp_manager_real == 'absent') {
+    file { "${::tomcat::deploymentdir_real}/webapps/manager":
       ensure  => absent,
       recurse => true,
       force   => true,
-      require => Exec["move_tomcat-${name}"],
+      require => Exec["move_tomcat-${::tomcat::install::mod_name}"],
     }
   }
 
-  if ($default_webapp_root == 'absent') {
-    file { "${deploymentdir}/webapps/ROOT":
+  if ($::tomcat::default_webapp_root_real == 'absent') {
+    file { "${::tomcat::deploymentdir_real}/webapps/ROOT":
       ensure  => absent,
       recurse => true,
       force   => true,
-      require => Exec["move_tomcat-${name}"],
+      require => Exec["move_tomcat-${::tomcat::install::mod_name}"],
     }
   }
 }

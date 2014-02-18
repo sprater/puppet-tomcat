@@ -85,7 +85,7 @@ class tomcat (
   include tomcat::params
 
   validate_re($tomcat::params::source, '.tar.gz$',
-    'The Java source file is not a tar-gzipped file.')
+    'The Tomcat distribution file is not a tar-gzipped file.')
   validate_absolute_path($tomcat::params::deploymentdir)
   validate_string($tomcat::params::user)
   validate_re($tomcat::params::default_webapp_docs,
