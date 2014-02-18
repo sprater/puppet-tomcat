@@ -22,7 +22,7 @@
 # Copyright 2014 Francis Pereira, Scott Prater
 #
 
-class tomcat::install {
+class tomcat::install inherits tomcat {
 
   include tomcat
 
