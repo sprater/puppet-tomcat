@@ -1,21 +1,22 @@
 {
   "name": "7terminals-tomcat",
-  "author": "Francis Pereira",
+  "author": "Francis Pereira, Scott Prater",
   "description": "Puppet module to setup and install Apache Tomcat application server",
   "license": "",
   "project_page": "https://github.com/7terminals/puppet-tomcat",
   "source": "https://github.com/7terminals/puppet-tomcat",
   "summary": "https://github.com/7terminals/puppet-tomcat",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "checksums": {
-    "Modulefile": "20aa8e110edbd6fa5e48206b0e06ad85",
-    "README.markdown": "51db57088ca6b94b50505233633dd6cd",
-    "Rakefile": "f37e6131fe7de9a49b09d31596f5fbf1",
-    "manifests\\init.pp": "4f2d44d2d78f7b27e64389efea3873df",
-    "manifests\\setup.pp": "6c8a921ef296a4a19b63ef32301973f3",
+    "Modulefile": "37cff12c3ab251dd45731cae4a13ccb3",
+    "README.markdown": "5dd73accf831a243f8158c9ceab80945",
+    "Rakefile": "11ca38083b46a8be9cb6ec612243838a",
+    "manifests\\init.pp": "297ba19073f18add87f9b1912acb6404",
+    "manifests\\install.pp": "b4c8813995488e2c95b719adbbd20b95",
+    "manifests\\params.pp": "ec90501c072f1158d1de49bb1c189012",
     "spec\\spec.opts": "a600ded995d948e393fbe2320ba8e51c",
     "spec\\spec_helper.rb": "3ea886dd135e120afa31e0aab12e85b0",
-    "tests\\init.pp": "08d2905de59a33b0cd2a268b13e9374d"
+    "tests\\init.pp": "551af72a1a5aca74ceae76cb7a238044"
   },
   "dependencies": []
 }
