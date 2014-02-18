@@ -7,7 +7,7 @@
 #
 # [*source*]
 #  String that specifies the file that contains the Tomcat binary distribution.
-#  This file must be in the files directory in the caller module.  
+#  This file must be in the files directory in the caller module.
 #  Only .tar.gz source archives are supported.
 #
 # [*deploymentdir*]
@@ -88,15 +88,15 @@ class tomcat (
     'The Java source file is not a tar-gzipped file.')
   validate_absolute_path($tomcat::params::deploymentdir)
   validate_string($tomcat::params::user)
-  validate_re($tomcat::params::default_webapp_docs, 
+  validate_re($tomcat::params::default_webapp_docs,
     [ 'present', 'absent' ])
-  validate_re($tomcat::params::default_webapp_examples, 
+  validate_re($tomcat::params::default_webapp_examples,
     [ 'present', 'absent' ])
-  validate_re($tomcat::params::default_webapp_hostmanager, 
+  validate_re($tomcat::params::default_webapp_hostmanager,
     [ 'present', 'absent' ])
-  validate_re($tomcat::params::default_webapp_manager, 
+  validate_re($tomcat::params::default_webapp_manager,
     [ 'present', 'absent' ])
-  validate_re($tomcat::params::default_webapp_root, 
+  validate_re($tomcat::params::default_webapp_root,
     [ 'present', 'absent' ])
 
   $source_real = $source? {

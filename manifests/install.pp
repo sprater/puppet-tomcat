@@ -24,7 +24,7 @@
 
 class tomcat::install (
 
-  include tomcat 
+  include tomcat
 
   $cachedir = "/var/lib/puppet/working-tomcat-${name}"
 
@@ -39,7 +39,7 @@ class tomcat::install (
     ensure => 'directory',
     owner  => 'root',
     group  => 'root',
-    mode   => '644',
+    mode   => '0644',
   }
 
   # resource defaults for Exec
@@ -73,7 +73,7 @@ class tomcat::install (
     require => Exec["create_target_tomcat-${name}"],
   }
 
-  if ($default_webapp_docs == "absent") {
+  if ($default_webapp_docs == 'absent') {
     file { "${deploymentdir}/webapps/docs":
       ensure  => absent,
       recurse => true,
@@ -82,7 +82,7 @@ class tomcat::install (
     }
   }
 
-  if ($default_webapp_examples == "absent") {
+  if ($default_webapp_examples == 'absent') {
     file { "${deploymentdir}/webapps/examples":
       ensure  => absent,
       recurse => true,
@@ -91,7 +91,7 @@ class tomcat::install (
     }
   }
 
-  if ($default_webapp_hostmanager == "absent") {
+  if ($default_webapp_hostmanager == 'absent') {
     file { "${deploymentdir}/webapps/host-manager":
       ensure  => absent,
       recurse => true,
@@ -100,7 +100,7 @@ class tomcat::install (
     }
   }
 
-  if ($default_webapp_manager == "absent") {
+  if ($default_webapp_manager == 'absent') {
     file { "${deploymentdir}/webapps/manager":
       ensure  => absent,
       recurse => true,
@@ -109,7 +109,7 @@ class tomcat::install (
     }
   }
 
-  if ($default_webapp_root == "absent") {
+  if ($default_webapp_root == 'absent') {
     file { "${deploymentdir}/webapps/ROOT":
       ensure  => absent,
       recurse => true,
