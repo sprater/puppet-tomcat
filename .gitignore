@@ -2,3 +2,5 @@
 *.gz
 *.zip
 *.tar
+pkg/
+spec/fixtures

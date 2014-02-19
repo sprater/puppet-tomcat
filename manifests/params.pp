@@ -22,6 +22,7 @@ class tomcat::params {
     $source                     = 'apache-tomcat-7.0.50.tar.gz'
     $deploymentdir              = '/opt/tomcat7'
     $user                       = 'tomcat'
+    $group                      = 'tomcat'
     $default_webapp_docs        = 'present'
     $default_webapp_examples    = 'present'
     $default_webapp_hostmanager = 'present'

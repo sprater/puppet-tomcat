@@ -58,6 +58,24 @@ class { '::tomcat'
   source        => 'apache-tomcat-7.0.39.tar.gz',
   deploymentdir => '/home/example.com/apps/apache-tomcat',
   user          => 'example.com',
+  group         => 'mygroup',
+  default_webapp_docs        => 'present',
+  default_webapp_examples    => 'present',
+  default_webapp_hostmanager => 'present',
+  default_webapp_manager     => 'present',
+  default_webapp_root        => 'present'
+}
+```
+You can also just directly use the type `tomcat::install`:
+
+```puppet
+include tomcat::install
+
+tomcat:: install { 'example.com-tomcat':
+  source        => 'apache-tomcat-7.0.39.tar.gz',
+  deploymentdir => '/home/example.com/apps/apache-tomcat',
+  user          => 'example.com',
+  group         => 'mygroup',
   default_webapp_docs        => 'present',
   default_webapp_examples    => 'present',
   default_webapp_hostmanager => 'present',
@@ -74,12 +92,12 @@ class { '::tomcat'
 
 ####Public Classes
 
-* tomcat:  Main class, includes all other classes
+* tomcat:  Main class
+* tomcat::install: Puppet resource that  installs the Tomcat
+  binary package.
 
 ####Private Classes
 
-* tomcat::install: Creates the user and group, ensures that the correct
-  directories exist, and installs the base software and the Fedora WAR.
 * tomcat::params:  The default configuration parameters.
 
 ###Parameters
@@ -106,6 +124,12 @@ Default: **/opt/tomcat7**
 #####`user`
 
 The Unix user that will own the Tomcat installation.
+
+Default: **tomcat**
+
+#####`group`
+
+The Unix group that will own the Tomcat installation.
 
 Default: **tomcat**
 
@@ -150,8 +174,6 @@ This module does not define the raw filesystem devices, nor mount
 any filesystems.  Nor dies it create nor ensure the Unix user.
 Make sure the filesystem in which the Tomcat install will reside
 is created and mounted, and that the Unix user exists.
-
-This module assumes that the Unix group ID is the same as the Unix user ID.
 
 This module has been built and tested using Puppet 3.4.x. on RHEL6.  It should
 work on all Unices, but your mileage may vary.

@@ -15,7 +15,10 @@
 #  be installed.
 #
 # [*user*]
-#  String that specifies the user that will own the Tomcat installation.
+#  String that specifies the Unix user that will own the Tomcat installation.
+#
+# [*group*]
+#  String that specifies the Unix group that will own the Tomcat installation.
 #
 # [*default_webapp_docs*]
 #  String that specifies whether Tomcat's default webapp documentation should
@@ -52,6 +55,7 @@
 #   source                     => 'apache-tomcat-7.0.39.tar.gz',
 #   deploymentdir              => '/home/example.com/apps/apache-tomcat',
 #   user                       => 'example.com',
+#   group                      => 'mygroup',
 #   default_webapp_docs        => 'present',
 #   default_webapp_examples    => 'present',
 #   default_webapp_hostmanager => 'present',
@@ -73,6 +77,7 @@ class tomcat (
   $source                     = 'UNSET',
   $deploymentdir              = 'UNSET',
   $user                       = 'UNSET',
+  $group                      = 'UNSET',
   $default_webapp_docs        = 'UNSET',
   $default_webapp_examples    = 'UNSET',
   $default_webapp_hostmanager = 'UNSET',
@@ -88,6 +93,7 @@ class tomcat (
     'The Tomcat distribution file is not a tar-gzipped file.')
   validate_absolute_path($tomcat::params::deploymentdir)
   validate_string($tomcat::params::user)
+  validate_string($tomcat::params::group)
   validate_re($tomcat::params::default_webapp_docs,
     [ 'present', 'absent' ])
   validate_re($tomcat::params::default_webapp_examples,
@@ -112,6 +118,11 @@ class tomcat (
   $user_real = $user? {
     'UNSET' => $::tomcat::params::user,
     default => $user,
+  }
+
+  $group_real = $group? {
+    'UNSET' => $::tomcat::params::group,
+    default => $group,
   }
 
   $default_webapp_docs_real = $default_webapp_docs? {
@@ -139,8 +150,4 @@ class tomcat (
     default => $default_webapp_root,
   }
 
-# Using the anchor containment pattern for backwards compatibility (< 3.4.0)
-  anchor { 'tomcat::begin': } ->
-  class { '::tomcat::install': } ->
-  anchor { 'tomcat::end': }
 }
