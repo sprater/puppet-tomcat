@@ -116,7 +116,7 @@ class tomcat (
 
   $default_webapp_docs_real = $default_webapp_docs? {
     'UNSET' => $::tomcat::params::default_webapp_docs,
-    default => $default_webapp_docs_real,
+    default => $default_webapp_docs,
   }
 
   $default_webapp_examples_real = $default_webapp_examples? {
