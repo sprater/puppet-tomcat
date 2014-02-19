@@ -98,7 +98,7 @@ describe 'tomcat' do
     end
     it {
       should contain_exec('move_tomcat-tomcat').with( {
-        'command'     => 'cp -r extracted/apache-tomcat*/* /user/local/tomcat7 && chown -R fred:fred /user/local/tomcat7',
+        'command'     => 'cp -r extracted/apache-tomcat*/* /usr/local/tomcat7 && chown -R fred:fred /usr/local/tomcat7',
       } )
     }
   end
