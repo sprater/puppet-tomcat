@@ -29,20 +29,7 @@ describe 'tomcat' do
     end
     it {
       should contain_file('/var/lib/puppet/working-tomcat-tomcat/testtomcatsource.tar.gz').with( { 
-        'sources' => 'puppet:///modules/tomcat/testtomcatsource.tar.gz' } )
-    }
-  end
-
-  context "With invalid source specified" do
-    let :params do
-      {
-        :source => 'mybadpackage'
-      }
-    end
-    it {
-      expect {
-	should compile
-      }.to raise_error(Puppet::Error, /The Tomcat distribution file is not a tar-gzipped file/)
+        'source' => 'puppet:///modules/tomcat/testtomcatsource.tar.gz' } )
     }
   end
 
@@ -69,7 +56,7 @@ describe 'tomcat' do
     end
     it {
       should contain_exec('create_target_tomcat-tomcat').with( {
-        'creates'    => '/usr/local/local/tomcat7',
+        'creates'    => '/usr/local/tomcat7',
       } )
     }
 
@@ -83,7 +70,7 @@ describe 'tomcat' do
   # Test user
   context "With no user specified" do
     it {
-      should contain_exec('tomcat').with( {
+      should contain_exec('move_tomcat-tomcat').with( {
         'command'     => 'cp -r extracted/apache-tomcat*/* /opt/tomcat7 && chown -R tomcat:tomcat /opt/tomcat7',
       } )
     }
@@ -96,7 +83,7 @@ describe 'tomcat' do
       }
     end
     it {
-      should contain_exec('tomcat').with( {
+      should contain_exec('move_tomcat-tomcat').with( {
         'command'     => 'cp -r extracted/apache-tomcat*/* /opt/tomcat7 && chown -R fred:fred /opt/tomcat7',
       } )
     }
@@ -110,7 +97,7 @@ describe 'tomcat' do
       }
     end
     it {
-      should contain_exec('tomcat').with( {
+      should contain_exec('move_tomcat-tomcat').with( {
         'command'     => 'cp -r extracted/apache-tomcat*/* /user/local/tomcat7 && chown -R fred:fred /user/local/tomcat7',
       } )
     }
@@ -123,6 +110,11 @@ describe 'tomcat' do
     }
   end
   context "With default webapps docs set to 'absent'" do
+    let :params do
+      {
+        :default_webapp_docs   => 'absent',
+      }
+    end
     it {
       should contain_file('/opt/tomcat7/webapps/docs').with( {
         'ensure'  => 'absent',
@@ -139,6 +131,11 @@ describe 'tomcat' do
     }
   end
   context "With default webapps examples set to 'absent'" do
+    let :params do
+      {
+        :default_webapp_examples   => 'absent',
+      }
+    end
     it {
       should contain_file('/opt/tomcat7/webapps/examples').with( {
         'ensure'  => 'absent',
@@ -155,6 +152,11 @@ describe 'tomcat' do
     }
   end
   context "With default webapps host-manager set to 'absent'" do
+    let :params do
+      {
+        :default_webapp_hostmanager   => 'absent',
+      }
+    end
     it {
       should contain_file('/opt/tomcat7/webapps/host-manager').with( {
         'ensure'  => 'absent',
@@ -171,6 +173,11 @@ describe 'tomcat' do
     }
   end
   context "With default webapps manager set to 'absent'" do
+    let :params do
+      {
+        :default_webapp_manager   => 'absent',
+      }
+    end
     it {
       should contain_file('/opt/tomcat7/webapps/manager').with( {
         'ensure'  => 'absent',
@@ -187,6 +194,11 @@ describe 'tomcat' do
     }
   end
   context "With default webapps ROOT set to 'absent'" do
+    let :params do
+      {
+        :default_webapp_root   => 'absent',
+      }
+    end
     it {
       should contain_file('/opt/tomcat7/webapps/ROOT').with( {
         'ensure'  => 'absent',
