@@ -48,8 +48,12 @@ It should work on any Unix environment.
 `include 'tomcat'` in the puppet master's `site.pp` file is enough to get 
 you up and running.  It can also be included in any other caller module.
 
+Set this in `site.pp` or in your caller module:
 ```puppet
 include tomcat
+```
+or, alternatively (to override the default parameters):
+```puppet
 class { '::tomcat'
   source        => 'apache-tomcat-7.0.39.tar.gz',
   deploymentdir => '/home/example.com/apps/apache-tomcat',
