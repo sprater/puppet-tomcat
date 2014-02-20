@@ -76,7 +76,10 @@ define tomcat::install (
     $default_webapp_root        = undef,
 ) {
 
-  include ::tomcat
+  # The base class must be included first because it is used by parameter defaults
+  if ! defined(Class['tomcat']) {
+    fail('You must include the apache base class before using any tomcat defined resources')
+  }
 
   # We can get our params directly, or from the class
   $ti_source = $source? {

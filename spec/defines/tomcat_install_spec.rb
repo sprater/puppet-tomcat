@@ -5,19 +5,9 @@ require 'spec_helper'
 describe 'tomcat::install', :type => :define do
 
   let(:title) { 'test_default' }
-  #let :pre_condition do
-  #  'class { "tomcat" }'
-  #end
-  #tomcat::install { $deploymentdir_real:
-  #  source                     => $source_real,
-  #  deploymentdir              => $deploymentdir_real,
-  #  user                       => $user_real,
-  #  default_webapp_docs        => $default_webapp_docs_real,
-  #  default_webapp_examples    => $default_webapp_examples_real,
-  #  default_webapp_hostmanager => $default_webapp_hostmanager_real,
-  #  default_webapp_manager     => $default_webapp_manager_real,
-  #  default_webapp_root        => $default_webapp_root_real
-  #}
+  let :pre_condition do
+      'include tomcat'
+  end
 
   it {
     should contain_class('tomcat')
