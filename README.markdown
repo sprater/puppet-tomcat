@@ -66,12 +66,10 @@ class { '::tomcat'
   default_webapp_root        => 'present'
 }
 ```
-You can also just directly use the type `tomcat::install`:
+Then you can use the type `tomcat::install`:
 
 ```puppet
-include tomcat::install
-
-tomcat:: install { 'example.com-tomcat':
+tomcat::install { 'example.com-tomcat':
   source        => 'apache-tomcat-7.0.39.tar.gz',
   deploymentdir => '/home/example.com/apps/apache-tomcat',
   user          => 'example.com',
